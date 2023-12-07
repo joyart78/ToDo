@@ -1,146 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import {useState} from "react";
-import {FlatList, TextInput, TouchableOpacity} from "react-native-web";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import TodoListScreen from './components/TodoListScreen';
+import TodoActionsScreen from './components/TodoActionsScreen';
 
-export default function App() {
-  const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]);
-  const [editIndex, setEditIndex] = useState(-1);
+const Stack = createStackNavigator();
 
-  const handleAddTask = () => {
-      if (task){
-        if (editIndex !== -1) {
-          const updateTasks = [...tasks];
-          updateTasks[editIndex] = task;
-          setTasks(updateTasks)
-          setEditIndex(-1)
-        }
-        else {
-          setTasks([...tasks, task]);
-        }
-        setTask("")
-      }
-  }
+const App = () => {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="TodoActionsScreen">
+                <Stack.Screen name="Todo"
+                              component={TodoListScreen}
+                    />
+                <Stack.Screen name="TodoActions" component={TodoActionsScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
 
-  const handleEditTask = (index) => {
-    const taskToEdit = tasks[index];
-    setTask(taskToEdit)
-    setEditIndex(index)
-  }
-
-  const handleDeleteTask = (index) => {
-    const updateTask = [...tasks];
-    updateTask.splice(index, 1);
-    setTasks(updateTask);
-  }
-
-
-  const renderItem = ({item, index}) => (
-      <View style={styles.task}>
-        <Text
-            style={styles.itemList}>{item}</Text>
-        <View
-            style={styles.taskButtons}>
-          <TouchableOpacity
-              onPress={() => handleEditTask(index)}>
-            <Text
-                style={styles.editButton}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-              onPress={() => handleDeleteTask(index)}>
-            <Text
-                style={styles.deleteButton}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-  )
-
-  return (
-      <View style={styles.container}>
-        <Text style={styles.title}>ToDo App</Text>
-        <TextInput
-            style={styles.input}
-            placeholder="Enter task"
-            value={task}
-            onChangeText={(text) => setTask(text)}
-        />
-        <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleAddTask}>
-          <Text style={styles.addButtonText}>
-            {editIndex !== -1 ? "Update Task" : "Add Task"}
-          </Text>
-        </TouchableOpacity>
-        <FlatList
-            data={tasks}
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-  );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 40,
-        marginTop: 40,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20,
-        alignSelf: "center"
-    },
-    heading: {
-        fontSize: 30,
-        fontWeight: "bold",
-        marginBottom: 7,
-        color: "green",
-    },
-    input: {
-        borderWidth: 3,
-        borderColor: "#ccc",
-        padding: 10,
-        marginBottom: 10,
-        borderRadius: 10,
-        fontSize: 18,
-    },
-    addButton: {
-        backgroundColor: "green",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-    },
-    addButtonText: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center",
-        fontSize: 18,
-    },
-    task: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 15,
-        fontSize: 18,
-    },
-    itemList: {
-        fontSize: 19,
-    },
-    taskButtons: {
-        flexDirection: "row",
-    },
-    editButton: {
-        marginRight: 10,
-        color: "green",
-        fontWeight: "bold",
-        fontSize: 18,
-    },
-    deleteButton: {
-        color: "red",
-        fontWeight: "bold",
-        fontSize: 18,
-    },
-});
+export default App;
